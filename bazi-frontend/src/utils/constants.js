@@ -268,13 +268,33 @@ export const LUNAR_DAYS = [
 
 // ==================== 顏色配置 ====================
 
-/** 五行顏色 (Tailwind CSS classes) */
+/** 五行顏色 (使用 Violet theme 統一配色，更柔和) */
 export const WUXING_COLORS = {
-  '金': { bg: 'bg-gray-200', text: 'text-gray-800', hex: '#E8E8E8' },
-  '木': { bg: 'bg-green-500', text: 'text-white', hex: '#4CAF50' },
-  '水': { bg: 'bg-blue-500', text: 'text-white', hex: '#2196F3' },
-  '火': { bg: 'bg-red-500', text: 'text-white', hex: '#F44336' },
-  '土': { bg: 'bg-amber-700', text: 'text-white', hex: '#795548' }
+  '金': { 
+    bg: 'bg-gray-300', 
+    text: 'text-gray-800', 
+    hex: '#94a3b8' // 柔和的灰色
+  },
+  '木': { 
+    bg: 'bg-emerald-500', 
+    text: 'text-white', 
+    hex: '#10b981' // 柔和的綠色
+  },
+  '水': { 
+    bg: 'bg-cyan-500', 
+    text: 'text-white', 
+    hex: '#06b6d4' // 柔和的青色
+  },
+  '火': { 
+    bg: 'bg-orange-500', 
+    text: 'text-white', 
+    hex: '#f97316' // 柔和的橙色
+  },
+  '土': { 
+    bg: 'bg-amber-500', 
+    text: 'text-white', 
+    hex: '#f59e0b' // 柔和的琥珀色
+  }
 }
 
 /** 宮位顏色 */

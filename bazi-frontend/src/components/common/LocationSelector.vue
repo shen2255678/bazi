@@ -1,16 +1,23 @@
 <template>
-  <div class="location-selector bg-white rounded-lg shadow-lg p-6">
-    <h3 class="text-lg font-semibold text-gray-800 mb-3">📍 出生地點</h3>
+  <Card>
+    <CardHeader>
+      <CardTitle>📍 出生地點</CardTitle>
+    </CardHeader>
+    <CardContent>
 
     <!-- 城市選擇 -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">選擇城市</label>
+      <label class="block text-sm font-medium text-foreground mb-2">選擇城市</label>
       <select
         :value="modelValue.selectedCity"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         @change="updateCity($event.target.value)"
       >
-        <option v-for="city in cityList" :key="city" :value="city">
+        <option 
+          v-for="city in cityList" 
+          :key="city" 
+          :value="city"
+        >
           {{ city }}
         </option>
       </select>
@@ -22,40 +29,44 @@
         <input
           :checked="modelValue.customLocation.enabled"
           type="checkbox"
-          class="mr-2 w-4 h-4 text-purple-600 focus:ring-purple-500 rounded"
+          class="mr-2 w-4 h-4 focus:ring-2 rounded"
+          style="accent-color: hsl(258.3, 89.5%, 66.3%);"
           @change="toggleCustomLocation($event.target.checked)"
         >
-        <span class="text-sm text-gray-700">自訂經度</span>
+        <span class="text-sm text-foreground">自訂經度</span>
       </label>
 
       <div v-if="modelValue.customLocation.enabled" class="flex gap-2 flex-1">
-        <input
+        <Input
           :value="modelValue.customLocation.lng"
           type="number"
           step="0.0001"
           min="-180"
           max="180"
           placeholder="經度 (例如: 116.4074)"
-          class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+          class="flex-1 text-sm"
           @input="updateLongitude($event.target.value)"
-        >
-        <span class="text-xs text-gray-500 self-center">°E</span>
+        />
+        <span class="text-xs text-muted-foreground self-center">°E</span>
       </div>
     </div>
 
-    <!-- 當前座標顯示 -->
-    <div class="p-3 bg-blue-50 rounded-md border border-blue-200">
-      <p class="text-xs text-gray-600">
-        當前經度：<span class="font-mono font-semibold">{{ currentCoordinates.lng.toFixed(4) }}°E</span>
-        <span class="text-gray-500 ml-2">(緯度由城市決定)</span>
-      </p>
-    </div>
-  </div>
+      <!-- 當前座標顯示 -->
+      <div class="p-3 bg-muted rounded-md border border-border">
+        <p class="text-xs text-muted-foreground">
+          當前經度：<span class="font-mono font-semibold text-foreground">{{ currentCoordinates.lng.toFixed(4) }}°E</span>
+          <span class="text-muted-foreground ml-2">(緯度由城市決定)</span>
+        </p>
+      </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { CHINA_CITIES, getCityCoordinates } from '../../utils/solarTime.js'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 const props = defineProps({
   modelValue: {

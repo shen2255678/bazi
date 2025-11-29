@@ -1,6 +1,9 @@
 <template>
-  <div class="bazi-chart bg-white rounded-lg shadow-lg p-6">
-    <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">八字命盤</h2>
+  <Card>
+    <CardHeader>
+      <CardTitle class="text-center text-2xl">八字命盤</CardTitle>
+    </CardHeader>
+    <CardContent>
 
     <!-- 四柱表格 -->
     <div class="pillars-grid grid grid-cols-4 gap-4 mb-8">
@@ -149,88 +152,104 @@
       </div>
     </div>
 
-    <!-- 五行分布視覺化 -->
-    <div class="wuxing-visualization mt-8">
-      <h3 class="text-xl font-semibold mb-4 text-gray-700">五行分布圖</h3>
-      <div class="wuxing-bars space-y-3">
-        <div
-          v-for="item in wuxingRanking"
-          :key="item.element"
-          class="wuxing-bar-container"
-        >
-          <div class="flex items-center justify-between mb-1">
-            <span class="wuxing-name font-medium">{{ item.element }}</span>
-            <span class="wuxing-stats text-sm text-gray-600">
-              {{ item.count.toFixed(1) }} ({{ item.percentage }}%)
-            </span>
-          </div>
-          <div class="wuxing-bar-track bg-gray-200 rounded-full h-6 overflow-hidden">
+      <!-- 五行分布視覺化 -->
+      <Card class="mt-8">
+        <CardHeader>
+          <CardTitle>五行分布圖</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="wuxing-bars space-y-3">
             <div
-              class="wuxing-bar-fill h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2"
-              :style="{
-                width: `${item.percentage}%`,
-                backgroundColor: getWuxingColor(item.element),
-                color: getTextColor(getWuxingColor(item.element))
-              }"
+              v-for="item in wuxingRanking"
+              :key="item.element"
+              class="wuxing-bar-container"
             >
-              <span class="text-xs font-semibold" :style="{ color: getTextColor(getWuxingColor(item.element)) }">
-                {{ translateLevel(item.level) }}
-              </span>
+              <div class="flex items-center justify-between mb-1">
+                <span class="wuxing-name font-medium">{{ item.element }}</span>
+                <span class="wuxing-stats text-sm text-muted-foreground">
+                  {{ item.count.toFixed(1) }} ({{ item.percentage }}%)
+                </span>
+              </div>
+              <div class="wuxing-bar-track bg-muted rounded-full h-6 overflow-hidden">
+                <div
+                  class="wuxing-bar-fill h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2"
+                  :style="{
+                    width: `${item.percentage}%`,
+                    backgroundColor: getWuxingColor(item.element),
+                    color: getTextColor(getWuxingColor(item.element))
+                  }"
+                >
+                  <span class="text-xs font-semibold" :style="{ color: getTextColor(getWuxingColor(item.element)) }">
+                    {{ translateLevel(item.level) }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
 
-    <!-- 日主分析卡片 -->
-    <div class="day-master-analysis mt-8 p-4 bg-linear-to-r from-amber-50 to-yellow-50 rounded-lg border-2 border-amber-200">
-      <h3 class="text-lg font-semibold mb-3 text-amber-800">日主分析</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <span class="text-gray-600">日干：</span>
-          <span class="font-bold text-lg" :style="{ color: getWuxingColor(wuxingAnalysis.dayMaster.wuxing) }">
-            {{ wuxingAnalysis.dayMaster.stem }}
-          </span>
-        </div>
-        <div>
-          <span class="text-gray-600">五行：</span>
-          <span class="font-bold" :style="{ color: getWuxingColor(wuxingAnalysis.dayMaster.wuxing) }">
-            {{ wuxingAnalysis.dayMaster.wuxing }}
-          </span>
-        </div>
-        <div>
-          <span class="text-gray-600">強弱：</span>
-          <span class="font-bold">{{ wuxingAnalysis.dayMaster.strength }}</span>
-        </div>
-        <div>
-          <span class="text-gray-600">數量：</span>
-          <span class="font-bold">{{ wuxingAnalysis.dayMaster.count.toFixed(1) }}</span>
-        </div>
-      </div>
-    </div>
+      <!-- 日主分析卡片 -->
+      <Card class="mt-8">
+        <CardHeader>
+          <CardTitle>日主分析</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-muted-foreground">日干：</span>
+              <span class="font-bold text-lg" :style="{ color: getWuxingColor(wuxingAnalysis.dayMaster.wuxing) }">
+                {{ wuxingAnalysis.dayMaster.stem }}
+              </span>
+            </div>
+            <div>
+              <span class="text-muted-foreground">五行：</span>
+              <span class="font-bold" :style="{ color: getWuxingColor(wuxingAnalysis.dayMaster.wuxing) }">
+                {{ wuxingAnalysis.dayMaster.wuxing }}
+              </span>
+            </div>
+            <div>
+              <span class="text-muted-foreground">強弱：</span>
+              <span class="font-bold text-foreground">{{ wuxingAnalysis.dayMaster.strength }}</span>
+            </div>
+            <div>
+              <span class="text-muted-foreground">數量：</span>
+              <span class="font-bold text-foreground">{{ wuxingAnalysis.dayMaster.count.toFixed(1) }}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-    <!-- 用神喜忌 -->
-    <div class="yongshen-analysis mt-6 grid grid-cols-3 gap-4">
-      <div class="yongshen-card bg-green-50 border-2 border-green-300 rounded-lg p-4">
-        <div class="text-sm text-gray-600 mb-1">用神</div>
-        <div class="text-2xl font-bold text-green-700">{{ wuxingAnalysis.yongshen }}</div>
+      <!-- 用神喜忌 -->
+      <div class="yongshen-analysis mt-6 grid grid-cols-3 gap-4">
+        <Card class="border-2" style="border-color: hsl(var(--primary));">
+          <CardContent class="p-4 text-center">
+            <div class="text-sm text-muted-foreground mb-1">用神</div>
+            <div class="text-2xl font-bold" style="color: hsl(var(--primary));">{{ wuxingAnalysis.yongshen }}</div>
+          </CardContent>
+        </Card>
+        <Card class="border-2" style="border-color: hsl(var(--primary) / 0.7);">
+          <CardContent class="p-4 text-center">
+            <div class="text-sm text-muted-foreground mb-1">喜神</div>
+            <div class="text-2xl font-bold" style="color: hsl(var(--primary) / 0.8);">{{ wuxingAnalysis.xishen }}</div>
+          </CardContent>
+        </Card>
+        <Card class="border-2" style="border-color: hsl(var(--muted-foreground));">
+          <CardContent class="p-4 text-center">
+            <div class="text-sm text-muted-foreground mb-1">忌神</div>
+            <div class="text-2xl font-bold text-muted-foreground">{{ wuxingAnalysis.jishen }}</div>
+          </CardContent>
+        </Card>
       </div>
-      <div class="yongshen-card bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
-        <div class="text-sm text-gray-600 mb-1">喜神</div>
-        <div class="text-2xl font-bold text-blue-700">{{ wuxingAnalysis.xishen }}</div>
-      </div>
-      <div class="yongshen-card bg-red-50 border-2 border-red-300 rounded-lg p-4">
-        <div class="text-sm text-gray-600 mb-1">忌神</div>
-        <div class="text-2xl font-bold text-red-700">{{ wuxingAnalysis.jishen }}</div>
-      </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { getNayin, getStemWuxing, getBranchWuxing, getHiddenStems } from '../../utils/calculators/wuxing.js'
 import { WUXING_COLORS } from '../../utils/constants.js'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 const props = defineProps({
   pillars: {
@@ -251,7 +270,13 @@ const wuxingRanking = computed(() => {
 // 獲取五行顏色（返回 hex 值）
 function getWuxingColor(wuxing) {
   const colorObj = WUXING_COLORS[wuxing]
-  return colorObj?.hex || colorObj || '#gray'
+  if (!colorObj) return '#gray'
+  // 如果 hex 是 HSL 格式，轉換為實際顏色值
+  if (colorObj.hex && colorObj.hex.startsWith('hsl')) {
+    // 暫時返回一個默認值，實際應該解析 HSL
+    return '#gray'
+  }
+  return colorObj.hex || colorObj || '#gray'
 }
 
 // 判斷顏色亮度，決定使用白色還是黑色文字
@@ -302,8 +327,8 @@ function translateLevel(level) {
 }
 
 .pillar-card {
-  background: linear-gradient(to bottom, rgb(249 250 251), white);
-  border: 2px solid rgb(209 213 219);
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--border));
   border-radius: 0.5rem;
   padding: 1rem;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -316,14 +341,15 @@ function translateLevel(level) {
 }
 
 .day-pillar {
-  border-color: rgb(251 191 36);
-  background: linear-gradient(to bottom, rgb(255 251 235), rgb(254 249 195));
+  border-color: hsl(var(--primary));
+  background: linear-gradient(to bottom, hsl(var(--primary) / 0.1), hsl(var(--card)));
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
 
 .pillar-header {
   text-align: center;
   font-weight: bold;
-  color: rgb(55 65 81);
+  color: hsl(var(--card-foreground));
   margin-bottom: 0.75rem;
   font-size: 1.125rem;
 }
@@ -349,13 +375,13 @@ function translateLevel(level) {
 }
 
 .day-master {
-  box-shadow: 0 0 0 4px rgb(252 211 77), 0 0 0 6px white;
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.3), 0 0 0 5px hsl(var(--card));
 }
 
 .nayin-label {
   text-align: center;
   font-size: 0.875rem;
-  color: rgb(75 85 99);
+  color: hsl(var(--muted-foreground));
   margin-bottom: 0.75rem;
   font-weight: 500;
 }
@@ -368,7 +394,7 @@ function translateLevel(level) {
 
 .hidden-stem-label {
   font-size: 0.75rem;
-  color: rgb(107 114 128);
+  color: hsl(var(--muted-foreground));
   margin-bottom: 0.5rem;
   text-align: center;
 }
@@ -388,7 +414,7 @@ function translateLevel(level) {
 }
 
 .wuxing-visualization {
-  background: rgb(249 250 251);
+  background: hsl(var(--card));
   border-radius: 0.5rem;
   padding: 1.5rem;
 }
@@ -398,7 +424,7 @@ function translateLevel(level) {
 }
 
 .wuxing-name {
-  color: rgb(55 65 81);
+  color: hsl(var(--foreground));
 }
 
 .wuxing-bar-track {

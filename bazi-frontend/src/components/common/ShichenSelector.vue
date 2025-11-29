@@ -1,30 +1,36 @@
 <template>
-  <div class="shichen-selector bg-white rounded-lg shadow-lg p-6">
-    <h3 class="text-lg font-semibold text-gray-800 mb-3">⏰ 時辰快速選擇</h3>
-    <p class="text-xs text-gray-500 mb-4">點擊下方時辰可快速設定對應的起始時間</p>
+  <Card>
+    <CardHeader>
+      <CardTitle>⏰ 時辰快速選擇</CardTitle>
+      <CardDescription>點擊下方時辰可快速設定對應的起始時間</CardDescription>
+    </CardHeader>
+    <CardContent>
 
     <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
       <button
         v-for="shichen in shichenList"
         :key="shichen.name"
         :class="[
-          'shichen-btn px-3 py-2 rounded-lg border-2 transition-all text-sm font-medium',
+          'shichen-btn px-3 py-2 rounded-lg border-2 transition-all text-sm font-medium cursor-pointer',
           isCurrentShichen(shichen)
-            ? 'bg-purple-600 text-white border-purple-600 shadow-lg'
-            : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400 hover:bg-purple-50'
+            ? 'bg-primary text-primary-foreground border-primary shadow-lg'
+            : 'bg-card text-card-foreground border-border hover:bg-accent hover:text-accent-foreground'
         ]"
+        :style="isCurrentShichen(shichen) ? 'background-color: hsl(263.4, 70%, 50.4%); color: hsl(210, 20%, 98%); border-color: hsl(263.4, 70%, 50.4%);' : ''"
         @click="selectShichen(shichen)"
       >
         <div class="font-bold">{{ shichen.name }}</div>
         <div class="text-xs opacity-90">{{ shichen.display }}</div>
       </button>
     </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { SHICHEN_RANGES } from '../../utils/solarTime.js'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 
 const props = defineProps({
   modelValue: {

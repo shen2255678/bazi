@@ -1,10 +1,13 @@
 <template>
-  <div class="birth-info-form bg-white rounded-lg shadow-lg p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">📅 出生資料</h2>
+  <Card>
+    <CardHeader>
+      <CardTitle>📅 出生資料</CardTitle>
+    </CardHeader>
+    <CardContent>
 
     <!-- 性別選擇 -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">性別</label>
+      <label class="block text-sm font-medium text-foreground mb-2">性別</label>
       <div class="flex gap-4">
         <label class="flex items-center cursor-pointer">
           <input
@@ -12,10 +15,11 @@
             type="radio"
             name="gender"
             value="male"
-            class="mr-2 w-4 h-4 text-purple-600 focus:ring-purple-500"
+            class="mr-2 w-4 h-4 focus:ring-2"
+            style="accent-color: hsl(258.3, 89.5%, 66.3%);"
             @change="updateGender('male')"
           >
-          <span class="text-sm">👨 男性</span>
+          <span class="text-sm text-foreground">👨 男性</span>
         </label>
         <label class="flex items-center cursor-pointer">
           <input
@@ -23,103 +27,58 @@
             type="radio"
             name="gender"
             value="female"
-            class="mr-2 w-4 h-4 text-purple-600 focus:ring-purple-500"
+            class="mr-2 w-4 h-4 focus:ring-2"
+            style="accent-color: hsl(var(--primary));"
             @change="updateGender('female')"
           >
-          <span class="text-sm">👩 女性</span>
+          <span class="text-sm text-foreground">👩 女性</span>
         </label>
       </div>
-      <p class="text-xs text-gray-500 mt-1">* 性別影響大運起運方向（男女順逆不同）</p>
+      <p class="text-xs text-muted-foreground mt-1">* 性別影響大運起運方向（男女順逆不同）</p>
     </div>
 
     <!-- 出生日期 -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">出生日期（國曆）</label>
-      <div class="grid grid-cols-3 gap-3">
-        <div>
-          <input
-            :value="modelValue.birthDate.year"
-            type="number"
-            min="1900"
-            max="2100"
-            placeholder="年份"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            @input="updateBirthDate('year', $event.target.value)"
-          >
-          <span class="text-xs text-gray-500">年</span>
-        </div>
-        <div>
-          <input
-            :value="modelValue.birthDate.month"
-            type="number"
-            min="1"
-            max="12"
-            placeholder="月份"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            @input="updateBirthDate('month', $event.target.value)"
-          >
-          <span class="text-xs text-gray-500">月</span>
-        </div>
-        <div>
-          <input
-            :value="modelValue.birthDate.day"
-            type="number"
-            min="1"
-            max="31"
-            placeholder="日"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            @input="updateBirthDate('day', $event.target.value)"
-          >
-          <span class="text-xs text-gray-500">日</span>
-        </div>
-      </div>
+      <label class="block text-sm font-medium text-foreground mb-2">出生日期（國曆）</label>
+      <input
+        :value="dateString"
+        type="date"
+        min="1900-01-01"
+        max="2100-12-31"
+        class="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+        @change="updateDateFromString($event.target.value)"
+        @input="updateDateFromString($event.target.value)"
+      />
     </div>
 
     <!-- 出生時間 -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">出生時間（精確到分鐘）</label>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <input
-            :value="modelValue.birthDate.hour"
-            type="number"
-            min="0"
-            max="23"
-            placeholder="小時"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            @input="updateBirthDate('hour', $event.target.value)"
-          >
-          <span class="text-xs text-gray-500">時 (0-23)</span>
-        </div>
-        <div>
-          <input
-            :value="modelValue.birthDate.minute"
-            type="number"
-            min="0"
-            max="59"
-            placeholder="分鐘"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            @input="updateBirthDate('minute', $event.target.value)"
-          >
-          <span class="text-xs text-gray-500">分 (0-59)</span>
-        </div>
-      </div>
+      <label class="block text-sm font-medium text-foreground mb-2">出生時間（精確到分鐘）</label>
+      <input
+        :value="timeString"
+        type="time"
+        class="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+        @change="updateTimeFromString($event.target.value)"
+        @input="updateTimeFromString($event.target.value)"
+      />
     </div>
 
-    <!-- 當前時辰提示 -->
-    <div v-if="currentShichen" class="mt-2 p-3 bg-purple-50 rounded-md border border-purple-200">
-      <p class="text-sm">
-        <span class="text-gray-600">當前對應時辰：</span>
-        <span class="font-bold text-purple-700">{{ currentShichen.name }}</span>
-        <span class="text-xs text-gray-500 ml-2">({{ currentShichen.display }})</span>
-      </p>
-    </div>
-  </div>
+      <!-- 當前時辰提示 -->
+      <div v-if="currentShichen" class="mt-2 p-3 bg-muted rounded-md border border-border">
+        <p class="text-sm">
+          <span class="text-muted-foreground">當前對應時辰：</span>
+          <span class="font-bold text-primary">{{ currentShichen.name }}</span>
+          <span class="text-xs text-muted-foreground ml-2">({{ currentShichen.display }})</span>
+        </p>
+      </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { getShichenByTime } from '../../utils/solarTime.js'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 const props = defineProps({
   modelValue: {
@@ -136,10 +95,59 @@ const currentShichen = computed(() => {
   return getShichenByTime(props.modelValue.birthDate.hour, props.modelValue.birthDate.minute || 0)
 })
 
+// 日期字串（用於 date input）
+const dateString = computed(() => {
+  const { year, month, day } = props.modelValue.birthDate
+  if (!year || !month || !day) return ''
+  // 格式化為 YYYY-MM-DD
+  const formattedMonth = String(month).padStart(2, '0')
+  const formattedDay = String(day).padStart(2, '0')
+  return `${year}-${formattedMonth}-${formattedDay}`
+})
+
+// 時間字串（用於 time input）
+const timeString = computed(() => {
+  const { hour, minute } = props.modelValue.birthDate
+  if (hour === undefined || hour === null || minute === undefined || minute === null) return ''
+  // 格式化為 HH:mm
+  const formattedHour = String(hour).padStart(2, '0')
+  const formattedMinute = String(minute).padStart(2, '0')
+  return `${formattedHour}:${formattedMinute}`
+})
+
 function updateGender(value) {
   emit('update:modelValue', {
     ...props.modelValue,
     gender: value
+  })
+}
+
+// 從日期字串更新（YYYY-MM-DD）
+function updateDateFromString(dateStr) {
+  if (!dateStr) return
+  const [year, month, day] = dateStr.split('-').map(Number)
+  emit('update:modelValue', {
+    ...props.modelValue,
+    birthDate: {
+      ...props.modelValue.birthDate,
+      year,
+      month,
+      day
+    }
+  })
+}
+
+// 從時間字串更新（HH:mm）
+function updateTimeFromString(timeStr) {
+  if (!timeStr) return
+  const [hour, minute] = timeStr.split(':').map(Number)
+  emit('update:modelValue', {
+    ...props.modelValue,
+    birthDate: {
+      ...props.modelValue.birthDate,
+      hour: hour || 0,
+      minute: minute || 0
+    }
   })
 }
 
