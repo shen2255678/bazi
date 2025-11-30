@@ -41,12 +41,27 @@
     <BaziChart
       :pillars="result.pillars"
       :wuxing-analysis="result.wuxing"
+      :shishen="result.shishen"
+    />
+
+    <!-- 十神分析 -->
+    <ShishenDisplay
+      v-if="result.shishenAnalysis"
+      :shishen-analysis="result.shishenAnalysis"
+    />
+
+    <!-- 大運排盤 -->
+    <DayunDisplay
+      v-if="result.dayun"
+      :dayun="result.dayun"
     />
   </div>
 </template>
 
 <script setup>
 import BaziChart from './BaziChart.vue'
+import DayunDisplay from './DayunDisplay.vue'
+import ShishenDisplay from './ShishenDisplay.vue'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 defineProps({

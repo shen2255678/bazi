@@ -6,139 +6,55 @@
     <CardContent>
 
     <!-- 傳統方格盤式佈局 -->
-    <div class="palace-grid">
-      <!-- 第一行：巳、午、未、申 -->
+    <!-- 參考代碼：zw1-zw12 對應固定的地支順序（子、丑、寅...），但顯示的宮位名稱會根據命宮位置改變 -->
+    <!-- 顯示順序：zw6,zw7,zw8,zw9 (第一行), zw5,zwHome,zw10,zw4,zw11 (第二行), zw3,zw2,zw1,zw12 (第三行) -->
+    <div class="palace-grid" v-if="palaceData.length > 0 && getPalacesByDisplayOrder().length > 0">
+      <!-- 第一行：zw6,zw7,zw8,zw9 (對應地支：巳、午、未、申) -->
       <Card
+        v-for="(palace, index) in getPalacesByDisplayOrder().slice(0, 4)"
+        :key="`palace-${index}-${palace.earthlyBranch || index}`"
         class="palace-card cursor-pointer group"
-        :class="getPalaceClass('父母宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('父母宮')"
-        :title="'點擊查看 ' + '父母宮' + ' 詳細說明'"
+        :class="[
+          getPalaceClass(palace.name),
+          {
+            'life-palace': palace.isMingGong,
+            'shen-palace': palace.isShenGong
+          }
+        ]"
+        @click="openPalaceInfo(palace.name)"
+        :title="'點擊查看 ' + palace.name + ' 詳細說明'"
       >
-        <div class="palace-branch">巳</div>
-        <div class="palace-name flex items-center gap-1">
-          父母宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('紫微')"
-            :title="'點擊查看 紫微 詳細說明'"
-          >紫微</span>
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('天府')"
-            :title="'點擊查看 天府 詳細說明'"
-          >天府</span>
-        </div>
+        <PalaceContent
+          :palace="palace"
+          :palace-name="palace.name"
+          :year-stem="formData?.birthDate?.year ? getYearStem(formData.birthDate.year) : '甲'"
+          @open-star="openStarInfo"
+        />
       </Card>
-
+      
+      <!-- 第二行：zw5 (左), [中心], zw10,zw4,zw11 (右) -->
       <Card
+        v-for="(palace, index) in getPalacesByDisplayOrder().slice(4, 5)"
+        :key="`palace-${index + 4}-${palace.earthlyBranch || index + 4}`"
         class="palace-card cursor-pointer group"
-        :class="getPalaceClass('福德宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('福德宮')"
-        :title="'點擊查看 福德宮 詳細說明'"
+        :class="[
+          getPalaceClass(palace.name),
+          {
+            'life-palace': palace.isMingGong,
+            'shen-palace': palace.isShenGong
+          }
+        ]"
+        @click="openPalaceInfo(palace.name)"
+        :title="'點擊查看 ' + palace.name + ' 詳細說明'"
       >
-        <div class="palace-branch">午</div>
-        <div class="palace-name flex items-center gap-1">
-          福德宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('天機')"
-            :title="'點擊查看 天機 詳細說明'"
-          >天機</span>
-          <span class="star assistant-star">左輔</span>
-        </div>
+        <PalaceContent
+          :palace="palace"
+          :palace-name="palace.name"
+          :year-stem="formData?.birthDate?.year ? getYearStem(formData.birthDate.year) : '甲'"
+          @open-star="openStarInfo"
+        />
       </Card>
-
-      <Card
-        class="palace-card cursor-pointer group"
-        :class="getPalaceClass('田宅宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('田宅宮')"
-        :title="'點擊查看 田宅宮 詳細說明'"
-      >
-        <div class="palace-branch">未</div>
-        <div class="palace-name flex items-center gap-1">
-          田宅宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('貪狼')"
-            :title="'點擊查看 貪狼 詳細說明'"
-          >貪狼[旺]</span>
-        </div>
-        <div class="palace-details">
-          <div class="detail-section">
-            <div class="detail-label">主星:</div>
-            <div class="detail-value">貪狼[旺]</div>
-          </div>
-          <div class="detail-section">
-            <div class="detail-label">輔星:</div>
-            <div class="detail-value">無</div>
-          </div>
-          <div class="detail-section">
-            <div class="detail-label">小星:</div>
-            <div class="detail-value">天貴[廟]</div>
-          </div>
-          <div class="detail-section">
-            <div class="detail-label">大限:</div>
-            <div class="detail-value">95~104虛歲</div>
-          </div>
-        </div>
-      </Card>
-
-      <Card
-        class="palace-card cursor-pointer group"
-        :class="getPalaceClass('事業宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('事業宮')"
-        :title="'點擊查看 事業宮 詳細說明'"
-      >
-        <div class="palace-branch">申</div>
-        <div class="palace-name flex items-center gap-1">
-          事業宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('太陽')"
-            :title="'點擊查看 太陽 詳細說明'"
-          >太陽</span>
-          <span class="star assistant-star">文昌</span>
-        </div>
-      </Card>
-
-      <!-- 第二行：辰、空白、空白、酉 -->
-      <Card
-        class="palace-card cursor-pointer group"
-        :class="getPalaceClass('兄弟宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('兄弟宮')"
-        :title="'點擊查看 兄弟宮 詳細說明'"
-      >
-        <div class="palace-branch">辰</div>
-        <div class="palace-name flex items-center gap-1">
-          兄弟宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('武曲')"
-            :title="'點擊查看 武曲 詳細說明'"
-          >武曲</span>
-        </div>
-      </Card>
-
+      
       <div class="palace-center">
         <div class="center-content">
           <div class="center-info" v-if="birthDate">
@@ -148,199 +64,144 @@
           <div class="center-meta">
             <div class="meta-item">
               <span class="meta-label">五行局數:</span>
-              <span class="meta-value">土五局</span>
+              <span class="meta-value">{{ chartData?.wuxingJu || '土五局' }}</span>
             </div>
             <div class="meta-item">
               <span class="meta-label">命主:</span>
-              <span class="meta-value">文曲</span>
+              <span class="meta-value">{{ chartData?.mingzhu || '文曲' }}</span>
             </div>
             <div class="meta-item">
               <span class="meta-label">身主:</span>
-              <span class="meta-value">天相</span>
+              <span class="meta-value">{{ chartData?.shenzhu || '天相' }}</span>
             </div>
             <div class="meta-item">
               <span class="meta-label">子年斗君:</span>
-              <span class="meta-value">巳</span>
+              <span class="meta-value">{{ chartData?.zinianDoujun || '巳' }}</span>
             </div>
             <div class="meta-item">
               <span class="meta-label">身宮:</span>
-              <span class="meta-value">未</span>
+              <span class="meta-value">{{ chartData?.shengong || '未' }}</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- 第二行右側：1個宮位 -->
       <Card
+        v-for="(palace, index) in getPalacesByDisplayOrder().slice(5, 6)"
+        :key="`palace-${index + 5}-${palace.earthlyBranch || index + 5}`"
         class="palace-card cursor-pointer group"
-        :class="getPalaceClass('交友宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('交友宮')"
-        :title="'點擊查看 交友宮 詳細說明'"
+        :class="[
+          getPalaceClass(palace.name),
+          {
+            'life-palace': palace.isMingGong,
+            'shen-palace': palace.isShenGong
+          }
+        ]"
+        @click="openPalaceInfo(palace.name)"
+        :title="'點擊查看 ' + palace.name + ' 詳細說明'"
       >
-        <div class="palace-branch">酉</div>
-        <div class="palace-name flex items-center gap-1">
-          交友宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('巨門')"
-            :title="'點擊查看 巨門 詳細說明'"
-          >巨門</span>
-          <span class="star assistant-star">天魁</span>
-        </div>
+        <PalaceContent
+          :palace="palace"
+          :palace-name="palace.name"
+          :year-stem="formData?.birthDate?.year ? getYearStem(formData.birthDate.year) : '甲'"
+          @open-star="openStarInfo"
+        />
       </Card>
 
-      <!-- 第三行：卯、空白、空白、戌 -->
+      <!-- 第三行左側：1個宮位 -->
       <Card
+        v-for="(palace, index) in getPalacesByDisplayOrder().slice(6, 7)"
+        :key="`palace-${index + 6}-${palace.earthlyBranch || index + 6}`"
         class="palace-card cursor-pointer group"
-        :class="getPalaceClass('夫妻宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('夫妻宮')"
-        :title="'點擊查看 夫妻宮 詳細說明'"
+        :class="[
+          getPalaceClass(palace.name),
+          {
+            'life-palace': palace.isMingGong,
+            'shen-palace': palace.isShenGong
+          }
+        ]"
+        @click="openPalaceInfo(palace.name)"
+        :title="'點擊查看 ' + palace.name + ' 詳細說明'"
       >
-        <div class="palace-branch">卯</div>
-        <div class="palace-name flex items-center gap-1">
-          夫妻宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('天同')"
-            :title="'點擊查看 天同 詳細說明'"
-          >天同</span>
-          <span class="star assistant-star">右弼</span>
-        </div>
+        <PalaceContent
+          :palace="palace"
+          :palace-name="palace.name"
+          :year-stem="formData?.birthDate?.year ? getYearStem(formData.birthDate.year) : '甲'"
+          @open-star="openStarInfo"
+        />
       </Card>
 
       <div class="palace-spacer"></div>
       <div class="palace-spacer"></div>
 
+      <!-- 第三行右側：1個宮位 -->
       <Card
+        v-for="(palace, index) in getPalacesByDisplayOrder().slice(7, 8)"
+        :key="`palace-${index + 7}-${palace.earthlyBranch || index + 7}`"
         class="palace-card cursor-pointer group"
-        :class="getPalaceClass('遷移宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('遷移宮')"
-        :title="'點擊查看 遷移宮 詳細說明'"
+        :class="[
+          getPalaceClass(palace.name),
+          {
+            'life-palace': palace.isMingGong,
+            'shen-palace': palace.isShenGong
+          }
+        ]"
+        @click="openPalaceInfo(palace.name)"
+        :title="'點擊查看 ' + palace.name + ' 詳細說明'"
       >
-        <div class="palace-branch">戌</div>
-        <div class="palace-name flex items-center gap-1">
-          遷移宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('天相')"
-            :title="'點擊查看 天相 詳細說明'"
-          >天相</span>
-          <span class="star assistant-star">祿存</span>
-        </div>
+        <PalaceContent
+          :palace="palace"
+          :palace-name="palace.name"
+          :year-stem="formData?.birthDate?.year ? getYearStem(formData.birthDate.year) : '甲'"
+          @open-star="openStarInfo"
+        />
       </Card>
 
-      <!-- 第四行：寅、丑、子、亥 -->
+      <!-- 第四行：4個宮位 -->
       <Card
+        v-for="(palace, index) in getPalacesByDisplayOrder().slice(8, 12)"
+        :key="`palace-${index + 8}-${palace.earthlyBranch || index + 8}`"
         class="palace-card cursor-pointer group"
-        :class="getPalaceClass('子女宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('子女宮')"
-        :title="'點擊查看 子女宮 詳細說明'"
+        :class="[
+          getPalaceClass(palace.name),
+          {
+            'life-palace': palace.isMingGong,
+            'shen-palace': palace.isShenGong
+          }
+        ]"
+        @click="openPalaceInfo(palace.name)"
+        :title="'點擊查看 ' + palace.name + ' 詳細說明'"
       >
-        <div class="palace-branch">寅</div>
-        <div class="palace-name flex items-center gap-1">
-          子女宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('廉貞')"
-            :title="'點擊查看 廉貞 詳細說明'"
-          >廉貞</span>
-          <span class="star sha-star">陀羅</span>
-        </div>
+        <PalaceContent
+          :palace="palace"
+          :palace-name="palace.name"
+          :year-stem="formData?.birthDate?.year ? getYearStem(formData.birthDate.year) : '甲'"
+          @open-star="openStarInfo"
+        />
       </Card>
-
-      <Card
-        class="palace-card cursor-pointer group"
-        :class="getPalaceClass('財帛宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('財帛宮')"
-        :title="'點擊查看 財帛宮 詳細說明'"
-      >
-        <div class="palace-branch">丑</div>
-        <div class="palace-name flex items-center gap-1">
-          財帛宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('天梁')"
-            :title="'點擊查看 天梁 詳細說明'"
-          >天梁</span>
-        </div>
-      </Card>
-
-      <Card
-        class="palace-card cursor-pointer group"
-        :class="getPalaceClass('疾厄宮')"
-        :style="{ borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('疾厄宮')"
-        :title="'點擊查看 疾厄宮 詳細說明'"
-      >
-        <div class="palace-branch">子</div>
-        <div class="palace-name flex items-center gap-1">
-          疾厄宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('七殺')"
-            :title="'點擊查看 七殺 詳細說明'"
-          >七殺</span>
-          <span class="star sha-star">地劫</span>
-        </div>
-      </Card>
-
-      <Card
-        class="palace-card life-palace cursor-pointer group"
-        :class="getPalaceClass('命宮')"
-        :style="{ borderColor: 'hsl(var(--primary))', borderWidth: '2px', borderStyle: 'solid' }"
-        @click="openPalaceInfo('命宮')"
-        :title="'點擊查看 命宮 詳細說明'"
-      >
-        <div class="palace-branch">亥</div>
-        <div class="palace-name flex items-center gap-1">
-          ★命宮
-          <span class="info-hint opacity-0 group-hover:opacity-100 transition-opacity text-xs">ℹ️</span>
-        </div>
-        <div class="palace-stars">
-          <span
-            class="star main-star cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-            @click.stop="openStarInfo('貪狼')"
-            :title="'點擊查看 貪狼 詳細說明'"
-          >貪狼</span>
-          <span class="star sihua sihua-lu">化祿</span>
-        </div>
-      </Card>
+    </div>
+    
+    <!-- 如果沒有排盤數據，顯示提示 -->
+    <div v-else class="text-center text-muted-foreground p-8">
+      <p>請先在「八字排盤」頁面計算八字，然後切換到「紫微命盤」查看結果</p>
     </div>
 
       <!-- 說明文字 -->
       <div class="mt-6 text-center text-sm text-muted-foreground">
-        <p>※ 此為示例命盤，實際計算功能開發中</p>
-        <p class="mt-2 text-xs text-muted-foreground opacity-75">💡 提示：點擊宮位名稱查看說明，點擊主星查看特點</p>
+        <p v-if="palaceData.length === 0">※ 請先計算八字以生成紫微命盤</p>
+        <p v-else-if="getPalacesByDisplayOrder().length === 0">⚠️ 宮位數據加載中或格式錯誤（palaceData: {{ palaceData.length }}, displayOrder: {{ getPalacesByDisplayOrder().length }}）</p>
+        <p v-else>💡 提示：點擊宮位名稱查看說明，點擊主星查看特點</p>
       </div>
     </CardContent>
   </Card>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { getStarBrightness, getStarSiHua } from '@/utils/calculators/ziweiStars.js'
+import PalaceContent from './PalaceContent.vue'
 
 const props = defineProps({
   birthDate: {
@@ -354,6 +215,14 @@ const props = defineProps({
       birthDate: {},
       location: {}
     })
+  },
+  ziweiChart: {
+    type: Object,
+    default: null
+  },
+  chartData: {
+    type: Object,
+    default: null
   }
 })
 
@@ -370,7 +239,7 @@ function getPalaceClass(palaceName) {
     '疾厄宮': 'palace-health',
     '遷移宮': 'palace-travel',
     '交友宮': 'palace-friends',
-    '事業宮': 'palace-career',
+    '官祿宮': 'palace-career',  // 修正：使用官祿宮而不是事業宮
     '田宅宮': 'palace-property',
     '福德宮': 'palace-fortune',
     '父母宮': 'palace-parents'
@@ -388,11 +257,116 @@ function openStarInfo(starName) {
   emit('open-star', starName)
 }
 
-// 檢查是否為主星（此函數目前未使用，保留以備將來需要）
+// 檢查是否為主星
 function isMainStar(starName) {
-  // 主星列表
   const mainStars = ['紫微', '天機', '太陽', '武曲', '天同', '廉貞', '天府', '太陰', '貪狼', '巨門', '天相', '天梁', '七殺', '破軍']
   return mainStars.includes(starName)
+}
+
+// 格式化星曜顯示
+function formatStarDisplay(star, branch, yearStem) {
+  let display = star.name
+  const brightness = getStarBrightness(star.name, branch)
+  if (brightness) {
+    display += `[${brightness}]`
+  }
+  if (star.sihua) {
+    if (star.yearSihua) {
+      display += `[生年${star.sihua}]`
+    }
+    if (star.direction) {
+      display += `[${star.direction}${star.sihua}]`
+    } else {
+      display += `[${star.sihua}]`
+    }
+  }
+  return display
+}
+
+// 獲取排盤後的宮位數據
+const palaceData = computed(() => {
+  if (props.ziweiChart && props.ziweiChart.palaces) {
+    console.log('ZiweiChart palaceData:', props.ziweiChart.palaces)
+    console.log('palaceData length:', props.ziweiChart.palaces.length)
+    if (props.ziweiChart.palaces.length > 0) {
+      console.log('第一個宮位:', props.ziweiChart.palaces[0])
+    }
+    return props.ziweiChart.palaces
+  }
+  // 如果沒有排盤結果，返回空數組（將顯示提示信息）
+  console.warn('ZiweiChart: 沒有排盤數據', props.ziweiChart)
+  return []
+})
+
+// 宮位順序（用於顯示）
+const PALACE_ORDER = ['命宮', '兄弟宮', '夫妻宮', '子女宮', '財帛宮', '疾厄宮', 
+                      '遷移宮', '交友宮', '官祿宮', '田宅宮', '福德宮', '父母宮']
+
+// 根據宮位名稱獲取數據
+function getPalaceData(palaceName) {
+  return palaceData.value.find(p => p.name === palaceName) || null
+}
+
+// 按照參考代碼的顯示順序排列宮位
+// 參考代碼中：Place12[i] 的 i 是地支索引（0=子, 1=丑, ..., 11=亥）
+// 顯示順序：zw6(巳=5),zw7(午=6),zw8(未=7),zw9(申=8),zw5(辰=4),中心,zw10(酉=9),zw4(卯=3),zw11(戌=10),zw3(寅=2),zw2(丑=1),zw1(子=0),zw12(亥=11)
+// palaceData 現在是按地支索引的數組（place12），所以可以直接通過索引訪問
+function getPalacesByDisplayOrder() {
+  if (!props.ziweiChart || !props.ziweiChart.palaces || !Array.isArray(palaceData.value)) {
+    console.warn('getPalacesByDisplayOrder: 數據不完整', {
+      hasZiweiChart: !!props.ziweiChart,
+      hasPalaces: !!(props.ziweiChart && props.ziweiChart.palaces),
+      isArray: Array.isArray(palaceData.value),
+      palaceDataLength: palaceData.value?.length
+    })
+    return []
+  }
+  
+  // 參考代碼的顯示順序（根據 HTML 結構）：
+  // zw6,zw7,zw8,zw9 (第一行)
+  // zw5,zwHome,zw10,zw4,zw11 (第二行，但實際上是：zw5,中心,zw10,zw4,zw11)
+  // zw3,zw2,zw1,zw12 (第三行)
+  // 對應地支索引：5,6,7,8,4,9,3,10,2,1,0,11
+  // 顯示順序的地支索引（對應 zw6,zw7,zw8,zw9,zw5,zw10,zw4,zw11,zw3,zw2,zw1,zw12）
+  const displayOrder = [5, 6, 7, 8, 4, 9, 3, 10, 2, 1, 0, 11]
+  
+  // 根據地支索引直接訪問對應的宮位數據
+  // palaceData.value[i] 對應地支索引 i（0=子, 1=丑, ..., 11=亥）
+  const result = []
+  for (const branchIndex of displayOrder) {
+    if (palaceData.value[branchIndex]) {
+      result.push(palaceData.value[branchIndex])
+    } else {
+      console.warn(`getPalacesByDisplayOrder: 找不到地支索引 ${branchIndex} 的宮位`)
+      // 如果找不到，創建一個空宮位（不應該發生，但作為安全措施）
+      const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+      result.push({
+        name: '',
+        heavenlyStem: '',
+        earthlyBranch: BRANCHES[branchIndex],
+        mainStars: [],
+        assistantStars: [],
+        shaStars: [],
+        minorStars: [],
+        isMingGong: false,
+        isShenGong: false
+      })
+    }
+  }
+  
+  console.log('getPalacesByDisplayOrder 結果:', result.length, '個宮位')
+  return result
+}
+
+// 獲取年干
+function getYearStem(year) {
+  const stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
+  return stems[(year - 4) % 10] || '甲'
+}
+
+// 獲取宮位樣式（不再使用內聯樣式，改用 class）
+function getPalaceStyle(palaceName) {
+  return {}
 }
 
 // 從星曜文字中提取主星名稱（處理 [旺] 等標記）
@@ -415,7 +389,8 @@ function extractStarName(starText) {
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, auto);
   gap: 0;
-  max-width: 800px;
+  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   border: 3px solid hsl(var(--border));
   border-radius: 0.5rem;
@@ -424,35 +399,35 @@ function extractStarName(starText) {
   overflow: hidden;
 }
 
-.palace-grid > .palace-card:nth-child(1) { grid-column: 1; grid-row: 1; }
-.palace-grid > .palace-card:nth-child(2) { grid-column: 2; grid-row: 1; }
-.palace-grid > .palace-card:nth-child(3) { grid-column: 3; grid-row: 1; }
-.palace-grid > .palace-card:nth-child(4) { grid-column: 4; grid-row: 1; }
-.palace-grid > .palace-card:nth-child(5) { grid-column: 1; grid-row: 2; }
-.palace-grid > .palace-center { grid-column: 2 / span 2; grid-row: 2; }
-.palace-grid > .palace-card:nth-child(7) { grid-column: 4; grid-row: 2; }
-.palace-grid > .palace-card:nth-child(8) { grid-column: 1; grid-row: 3; }
-.palace-grid > .palace-spacer:nth-child(9) { grid-column: 2; grid-row: 3; }
-.palace-grid > .palace-spacer:nth-child(10) { grid-column: 3; grid-row: 3; }
-.palace-grid > .palace-card:nth-child(11) { grid-column: 4; grid-row: 3; }
-.palace-grid > .palace-card:nth-child(12) { grid-column: 1; grid-row: 4; }
-.palace-grid > .palace-card:nth-child(13) { grid-column: 2; grid-row: 4; }
-.palace-grid > .palace-card:nth-child(14) { grid-column: 3; grid-row: 4; }
-.palace-grid > .palace-card:nth-child(15) { grid-column: 4; grid-row: 4; }
+/* 使用 nth-child 包含所有子元素 */
+.palace-grid > :nth-child(1) { grid-column: 1; grid-row: 1; }
+.palace-grid > :nth-child(2) { grid-column: 2; grid-row: 1; }
+.palace-grid > :nth-child(3) { grid-column: 3; grid-row: 1; }
+.palace-grid > :nth-child(4) { grid-column: 4; grid-row: 1; }
+.palace-grid > :nth-child(5) { grid-column: 1; grid-row: 2; }
+.palace-grid > :nth-child(6) { grid-column: 2 / span 2; grid-row: 2 / span 2; } /* 中央區域 */
+.palace-grid > :nth-child(7) { grid-column: 4; grid-row: 2; }
+.palace-grid > :nth-child(8) { grid-column: 1; grid-row: 3; }
+.palace-grid > :nth-child(9) { grid-column: 2; grid-row: 3; visibility: hidden; } /* spacer */
+.palace-grid > :nth-child(10) { grid-column: 3; grid-row: 3; visibility: hidden; } /* spacer */
+.palace-grid > :nth-child(11) { grid-column: 4; grid-row: 3; }
+.palace-grid > :nth-child(12) { grid-column: 1; grid-row: 4; }
+.palace-grid > :nth-child(13) { grid-column: 2; grid-row: 4; }
+.palace-grid > :nth-child(14) { grid-column: 3; grid-row: 4; }
+.palace-grid > :nth-child(15) { grid-column: 4; grid-row: 4; }
 
 :deep(.palace-card) {
-  min-height: 150px;
+  min-height: 200px;
   border: 2px solid hsl(var(--border)) !important;
   border-radius: 0 !important;
-  padding: 0.75rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: flex-start;
   transition: all 0.2s ease !important;
   position: relative;
-  overflow-y: auto;
-  max-height: 200px;
+  overflow: hidden;
   background: hsl(var(--card)) !important;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   margin: -1px 0 0 -1px;
@@ -503,9 +478,18 @@ function extractStarName(starText) {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 0 2px hsla(var(--primary), 0.3) !important;
 }
 
-/* 確保命宮覆蓋 Card 的內聯樣式 */
-:deep(.life-palace[style*="border-color"]) {
+/* 身宮標記 - 使用藍色邊框（參考圖片中的藍色框線） */
+:deep(.shen-palace) {
+  border: 2px solid #3b82f6 !important;
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2), 0 0 10px 2px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* 命宮和身宮同時存在時，使用命宮的紅色邊框 */
+:deep(.life-palace.shen-palace) {
   border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+              0 0 10px 2px hsla(var(--primary), 0.4),
+              0 0 20px 4px rgba(59, 130, 246, 0.3) !important;
 }
 
 :deep(.life-palace:hover) {
@@ -517,54 +501,12 @@ function extractStarName(starText) {
   background: linear-gradient(135deg, hsla(var(--primary), 0.2), hsl(var(--card))) !important;
 }
 
-.palace-branch {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: hsl(var(--muted-foreground));
-  margin-bottom: 0.25rem;
+:deep(.shen-palace:hover) {
+  border: 3px solid #3b82f6 !important;
+  box-shadow: inset 0 0 0 2px #3b82f6, 0 0 12px 3px rgba(59, 130, 246, 0.5) !important;
 }
 
-.palace-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: hsl(var(--card-foreground));
-  margin-bottom: 0.5rem;
-}
-
-.palace-stars {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: center;
-  width: 100%;
-  flex-grow: 1;
-  justify-content: center;
-}
-
-.star {
-  font-size: 0.75rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: 0.25rem;
-  font-weight: 500;
-  display: inline-block;
-}
-
-.main-star {
-  background-color: #3b82f6;
-  color: white;
-}
-
-.assistant-star {
-  background-color: #10b981;
-  color: white;
-  font-size: 0.7rem;
-}
-
-.sha-star {
-  background-color: #ef4444;
-  color: white;
-  font-size: 0.7rem;
-}
+/* 這些樣式現在在 PalaceContent.vue 中定義 */
 
 .sihua {
   font-size: 0.7rem;
@@ -582,7 +524,7 @@ function extractStarName(starText) {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 150px;
+  min-height: 200px;
   border: 2px solid hsl(var(--border)) !important;
   border-radius: 0 !important;
   background: hsl(var(--muted)) !important;
@@ -657,82 +599,7 @@ function extractStarName(starText) {
   font-weight: 500;
 }
 
-.palace-spacer {
-  /* 空白區域，用於保持網格結構 */
-  visibility: hidden;
-}
-
-/* 宮位顏色主題 - 使用左側邊框顏色標識和背景色 */
-.palace-life {
-  border-left-color: #9c27b0 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(156, 39, 176, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-sibling {
-  border-left-color: #ff9800 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(255, 152, 0, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-spouse {
-  border-left-color: #e91e63 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(233, 30, 99, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-children {
-  border-left-color: #00bcd4 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(0, 188, 212, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-wealth {
-  border-left-color: #ffd700 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(255, 215, 0, 0.15), hsl(var(--card))) !important;
-}
-
-.palace-health {
-  border-left-color: #4caf50 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(76, 175, 80, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-travel {
-  border-left-color: #ff5722 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(255, 87, 34, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-friends {
-  border-left-color: #9e9e9e !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(158, 158, 158, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-career {
-  border-left-color: #1976d2 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(25, 118, 210, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-property {
-  border-left-color: #795548 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(121, 85, 72, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-fortune {
-  border-left-color: #673ab7 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(103, 58, 183, 0.1), hsl(var(--card))) !important;
-}
-
-.palace-parents {
-  border-left-color: #3f51b5 !important;
-  border-left-width: 5px !important;
-  background: linear-gradient(to right, rgba(63, 81, 181, 0.1), hsl(var(--card))) !important;
-}
+/* 移除宮位特殊顏色，所有宮位使用統一樣式 */
+/* 特殊標記只保留在 life-palace 和 shen-palace 上 */
 </style>
 

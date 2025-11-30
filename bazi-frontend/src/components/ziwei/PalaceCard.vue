@@ -69,3 +69,4 @@ function getStarClass(starText) {
 </style>
 
 
+

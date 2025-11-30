@@ -11,19 +11,20 @@
       <div class="pillar-card">
         <div class="pillar-header">年柱</div>
         <div class="ganzhi-display">
-          <div class="stem" :style="{ 
+          <div class="stem" :style="{
             backgroundColor: getWuxingColor(getStemWuxing(pillars.year.stem)),
             color: getTextColor(getWuxingColor(getStemWuxing(pillars.year.stem)))
           }">
             {{ pillars.year.stem }}
           </div>
-          <div class="branch" :style="{ 
+          <div class="branch" :style="{
             backgroundColor: getWuxingColor(getBranchWuxing(pillars.year.branch)),
             color: getTextColor(getWuxingColor(getBranchWuxing(pillars.year.branch)))
           }">
             {{ pillars.year.branch }}
           </div>
         </div>
+        <div v-if="shishen" class="shishen-label">{{ shishen.year.stem }}</div>
         <div class="nayin-label">{{ getNayin(pillars.year.ganzhi) }}</div>
         <div class="hidden-stems">
           <div class="hidden-stem-label">藏干</div>
@@ -47,19 +48,20 @@
       <div class="pillar-card">
         <div class="pillar-header">月柱</div>
         <div class="ganzhi-display">
-          <div class="stem" :style="{ 
+          <div class="stem" :style="{
             backgroundColor: getWuxingColor(getStemWuxing(pillars.month.stem)),
             color: getTextColor(getWuxingColor(getStemWuxing(pillars.month.stem)))
           }">
             {{ pillars.month.stem }}
           </div>
-          <div class="branch" :style="{ 
+          <div class="branch" :style="{
             backgroundColor: getWuxingColor(getBranchWuxing(pillars.month.branch)),
             color: getTextColor(getWuxingColor(getBranchWuxing(pillars.month.branch)))
           }">
             {{ pillars.month.branch }}
           </div>
         </div>
+        <div v-if="shishen" class="shishen-label">{{ shishen.month.stem }}</div>
         <div class="nayin-label">{{ getNayin(pillars.month.ganzhi) }}</div>
         <div class="hidden-stems">
           <div class="hidden-stem-label">藏干</div>
@@ -83,19 +85,20 @@
       <div class="pillar-card day-pillar">
         <div class="pillar-header">日柱 ★</div>
         <div class="ganzhi-display">
-          <div class="stem day-master" :style="{ 
+          <div class="stem day-master" :style="{
             backgroundColor: getWuxingColor(getStemWuxing(pillars.day.stem)),
             color: getTextColor(getWuxingColor(getStemWuxing(pillars.day.stem)))
           }">
             {{ pillars.day.stem }}
           </div>
-          <div class="branch" :style="{ 
+          <div class="branch" :style="{
             backgroundColor: getWuxingColor(getBranchWuxing(pillars.day.branch)),
             color: getTextColor(getWuxingColor(getBranchWuxing(pillars.day.branch)))
           }">
             {{ pillars.day.branch }}
           </div>
         </div>
+        <div v-if="shishen" class="shishen-label">{{ shishen.day.stem }}</div>
         <div class="nayin-label">{{ getNayin(pillars.day.ganzhi) }}</div>
         <div class="hidden-stems">
           <div class="hidden-stem-label">藏干</div>
@@ -119,19 +122,20 @@
       <div class="pillar-card">
         <div class="pillar-header">時柱</div>
         <div class="ganzhi-display">
-          <div class="stem" :style="{ 
+          <div class="stem" :style="{
             backgroundColor: getWuxingColor(getStemWuxing(pillars.hour.stem)),
             color: getTextColor(getWuxingColor(getStemWuxing(pillars.hour.stem)))
           }">
             {{ pillars.hour.stem }}
           </div>
-          <div class="branch" :style="{ 
+          <div class="branch" :style="{
             backgroundColor: getWuxingColor(getBranchWuxing(pillars.hour.branch)),
             color: getTextColor(getWuxingColor(getBranchWuxing(pillars.hour.branch)))
           }">
             {{ pillars.hour.branch }}
           </div>
         </div>
+        <div v-if="shishen" class="shishen-label">{{ shishen.hour.stem }}</div>
         <div class="nayin-label">{{ getNayin(pillars.hour.ganzhi) }}</div>
         <div class="hidden-stems">
           <div class="hidden-stem-label">藏干</div>
@@ -259,6 +263,10 @@ const props = defineProps({
   wuxingAnalysis: {
     type: Object,
     required: true
+  },
+  shishen: {
+    type: Object,
+    default: null
   }
 })
 
@@ -376,6 +384,17 @@ function translateLevel(level) {
 
 .day-master {
   box-shadow: 0 0 0 3px hsl(var(--primary) / 0.3), 0 0 0 5px hsl(var(--card));
+}
+
+.shishen-label {
+  text-align: center;
+  font-size: 0.875rem;
+  color: hsl(var(--primary));
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  background: hsl(var(--primary) / 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }
 
 .nayin-label {
